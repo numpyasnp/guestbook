@@ -1,18 +1,15 @@
 from rest_framework.generics import ListCreateAPIView
 
-from api.v1.entry.serializers import EntrySerializer
+from api.v1.entry.pagination import GuestBookPagination
+from api.v1.entry.serializers import EntryCreateSerializer, EntryResponseSerializer
+from entry.models import Entry
 
 
 class EntryCreateListAPIView(ListCreateAPIView):
+    queryset = Entry.objects.select_related("user").order_by("created_date")
+    pagination_class = GuestBookPagination
 
-    serializer_class = EntrySerializer
-
-    # def post(self, request, *args, **kwargs):
-    #     serializer = EntryCreateSerializer(data=request.data)
-    #     serializer.is_valid(raise_exception=True)
-    #     serializer.save()
-    #
-    #     return Response(status=HTTPStatus.CREATED)
-
-    def get(self, request, *args, **kwargs):
-        pass
+    def get_serializer_class(self):
+        if self.request.method == "POST":
+            return EntryCreateSerializer
+        return EntryResponseSerializer

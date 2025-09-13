@@ -5,15 +5,15 @@ from user.models import User
 
 
 class EntryCreateSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(write_only=True)
+    name = serializers.CharField(write_only=True)
 
     class Meta:
         model = Entry
-        fields = ["username", "subject", "message"]
+        fields = ["name", "subject", "message"]
 
     def create(self, validated_data):
-        username = validated_data.pop("username")
-        user, _ = User.objects.get_or_create(name=username)
+        name = validated_data.pop("name")
+        user, _ = User.objects.get_or_create(name=name)
         entry = Entry.objects.create(user=user, **validated_data)
         return entry
 

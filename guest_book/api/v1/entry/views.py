@@ -6,7 +6,7 @@ from entry.models import Entry
 
 
 class EntryCreateListAPIView(ListCreateAPIView):
-    queryset = Entry.objects.select_related("user").order_by("created_date")
+    queryset = Entry.objects.select_related("user").order_by("-created_date")
     pagination_class = EntryPagination
 
     def get_serializer_class(self):

@@ -10,3 +10,4 @@ from user.models import User
 class UserListAPIView(ListAPIView):
     serializer_class = UserSerializer
     queryset = User.objects.with_entry_summary()
+    # todo: maybe we can use materialized view, truncate messages for optimization.

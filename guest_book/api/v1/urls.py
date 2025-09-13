@@ -5,4 +5,5 @@ app_name = "v1"
 
 urlpatterns = [
     path("entries", include("api.v1.entry.urls")),
+    path("users", include("api.v1.user.urls")),
 ]

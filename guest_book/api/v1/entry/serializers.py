@@ -23,4 +23,5 @@ class EntryResponseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Entry
-        fields = ["user", "subject", "message", "created_date"]
+        fields = ("user", "subject", "message")
+        read_only_fields = fields

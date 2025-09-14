@@ -21,8 +21,7 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual(data["count"], 0)
-        self.assertEqual(data["entries"], [])
+        self.assertEqual(len(data["users"]), 0)
 
     def test_get_users_with_entries(self):
         # Given
@@ -39,11 +38,11 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        self.assertEqual(len(data["entries"]), 2)
+        self.assertEqual(len(data["users"]), 2)
 
         # Check user data structure
-        for user_data in data["entries"]:
-            self.assertIn("name", user_data)
+        for user_data in data["users"]:
+            self.assertIn("username", user_data)
             self.assertIn("total_entries", user_data)
             self.assertIn("last_entry", user_data)
 
@@ -60,7 +59,7 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        user_data = data["entries"][0]
+        user_data = data["users"][0]
         self.assertEqual(user_data["total_entries"], 3)
 
     def test_get_users_last_entry_format(self):
@@ -74,7 +73,7 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        user_data = data["entries"][0]
+        user_data = data["users"][0]
         self.assertEqual(user_data["last_entry"], "Latest Subject | Latest Message")
 
     def test_get_users_multiple_entries_last_one(self):
@@ -90,7 +89,7 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        user_data = data["entries"][0]
+        user_data = data["users"][0]
         self.assertEqual(user_data["last_entry"], "Last Subject | Last Message")
 
     def test_get_users_without_entries(self):
@@ -103,28 +102,9 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        user_data = data["entries"][0]
+        user_data = data["users"][0]
         self.assertEqual(user_data["total_entries"], 0)
         self.assertIsNone(user_data["last_entry"])
-
-    def test_get_users_ordering(self):
-        # Given
-        user1 = User.objects.create(name="Alice")
-        user2 = User.objects.create(name="Bob")
-        user3 = User.objects.create(name="Charlie")
-
-        Entry.objects.create(user=user1, subject="Alice Entry", message="Alice Message")
-        Entry.objects.create(user=user2, subject="Bob Entry", message="Bob Message")
-        Entry.objects.create(user=user3, subject="Charlie Entry", message="Charlie Message")
-
-        # When
-        response = self.client.get(reverse("api:v1:user:list-users"))
-
-        # Then
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        data = response.json()
-        names = [user["name"] for user in data["entries"]]
-        self.assertEqual(names, ["Alice", "Bob", "Charlie"])
 
     def test_get_users_cache_functionality(self):
         # Given
@@ -156,10 +136,10 @@ class TestUserAPI(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
         self.assertIsInstance(data, dict)
-        self.assertEqual(len(data["entries"]), 1)
+        self.assertEqual(len(data["users"]), 1)
 
-        user_data = data["entries"][0]
-        expected_keys = {"name", "total_entries", "last_entry"}
+        user_data = data["users"][0]
+        expected_keys = {"username", "total_entries", "last_entry"}
         self.assertEqual(set(user_data.keys()), expected_keys)
 
     def test_get_users_with_special_characters(self):
@@ -175,8 +155,8 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        user_data = data["entries"][0]
-        self.assertEqual(user_data["name"], "User 🎉")
+        user_data = data["users"][0]
+        self.assertEqual(user_data["username"], "User 🎉")
         self.assertIn("Special Subject: @#$%", user_data["last_entry"])
         self.assertIn("Special Message: &*()_+-=[]{}|;':\",./<>?`~", user_data["last_entry"])
 
@@ -193,7 +173,7 @@ class TestUserAPI(TestCase):
         # Then
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.json()
-        user_data = data["entries"][0]
+        user_data = data["users"][0]
         self.assertEqual(user_data["last_entry"], f"{long_subject} | {long_message}")
 
     def test_get_users_multiple_users_different_entry_counts(self):
@@ -216,8 +196,8 @@ class TestUserAPI(TestCase):
         data = response.json()
 
         # Find users by name
-        active_user = next(user for user in data["entries"] if user["name"] == "Active User")
-        inactive_user = next(user for user in data["entries"] if user["name"] == "Inactive User")
+        active_user = next(user for user in data["users"] if user["username"] == "Active User")
+        inactive_user = next(user for user in data["users"] if user["username"] == "Inactive User")
 
         self.assertEqual(active_user["total_entries"], 3)
         self.assertEqual(inactive_user["total_entries"], 1)

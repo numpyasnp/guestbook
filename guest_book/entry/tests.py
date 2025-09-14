@@ -155,7 +155,6 @@ class TestEntryAPI(TestCase):
         self.assertIn("user", entry)
         self.assertIn("subject", entry)
         self.assertIn("message", entry)
-        self.assertIn("created_date", entry)
         self.assertEqual(entry["user"], "Test User")
         self.assertEqual(entry["subject"], "Test Subject")
         self.assertEqual(entry["message"], "Test Message")

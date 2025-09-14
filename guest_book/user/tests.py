@@ -210,12 +210,13 @@ class TestUserModel(TestCase):
     def test_user_with_entry_summary(self):
         # Given
         user = User.objects.create(name="Test User")
-        Entry.objects.create(user=user, subject="Test Subject", message="Test Message")
+        Entry.objects.create(user=user, subject="user first subject", message="user first message")
+        Entry.objects.create(user=user, subject="user last subject", message="user last message")
 
         # When
         users_with_summary = User.objects.with_entry_summary()
 
         # Then
         user_with_summary = users_with_summary.first()
-        self.assertEqual(user_with_summary.total_entries, 1)
-        self.assertEqual(user_with_summary.last_entry, "Test Subject | Test Message")
+        self.assertEqual(user_with_summary.total_entries, 2)
+        self.assertEqual(user_with_summary.last_entry, "user last subject | user last message")

@@ -1,13 +1,13 @@
-from django.core.cache import cache
-from django.db.models.signals import post_delete, post_save
-from django.dispatch import receiver
+# Optional cache invalidation:
+# If count accuracy is important and entries do not change frequently,
+# this signal handler can be activated to invalidate the cached count.
 
-from entry.models import Entry
+# CACHE_KEY_COUNT = "entry_count"
+#
+#
+# @receiver(post_save, sender=Entry)
+# @receiver(post_delete, sender=Entry)
+# def invalidate_entry_count_cache(sender, **kwargs):
+#     cache.delete(CACHE_KEY_COUNT)
 
-CACHE_KEY_COUNT = "entry_count"
-
-
-@receiver(post_save, sender=Entry)
-@receiver(post_delete, sender=Entry)
-def invalidate_entry_count_cache(sender, **kwargs):
-    cache.delete(CACHE_KEY_COUNT)
+# NOTE

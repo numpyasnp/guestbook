@@ -5,6 +5,15 @@ import math
 
 
 class EntryPagination(PageNumberPagination):
+    """
+    Custom pagination for GuestBook entries.
+
+    Note:
+    PageNumberPagination may slow down on large datasets
+    due to OFFSET cost. CursorPagination is recommended
+    for better performance in production.
+    """
+
     page_size = 3
 
     def get_paginated_response(self, data):
@@ -12,7 +21,9 @@ class EntryPagination(PageNumberPagination):
         total_count = cache.get(cache_key)
         if total_count is None:
             total_count = self.page.paginator.count
-            cache.set(cache_key, total_count, timeout=300)
+            cache.set(cache_key, total_count, timeout=30)
+            # Note: Count is cached with a short TTL.
+            # Immediate consistency is not guaranteed; newly added entries may not appear in the count instantly.
 
         return Response(
             {

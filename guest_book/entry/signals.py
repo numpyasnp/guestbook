@@ -9,5 +9,5 @@ CACHE_KEY_COUNT = "entry_count"
 
 @receiver(post_save, sender=Entry)
 @receiver(post_delete, sender=Entry)
-def invalidate_guestbook_count_cache(sender, **kwargs):
+def invalidate_entry_count_cache(sender, **kwargs):
     cache.delete(CACHE_KEY_COUNT)

@@ -65,6 +65,7 @@ class TestUserAPI(TestCase):
     def test_get_users_last_entry_format(self):
         # Given
         user = User.objects.create(name="Test User")
+        Entry.objects.create(user=user, subject="First Subject", message="First Message")
         Entry.objects.create(user=user, subject="Latest Subject", message="Latest Message")
 
         # When

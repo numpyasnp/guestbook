@@ -10,9 +10,13 @@ from user.models import User
 
 @method_decorator(cache_page(30), name="get")
 class UserListAPIView(ListAPIView):
+    """
+    WARNING: Caching is applied for performance, under the assumption that the data does not require
+    real-time updates. If immediate data freshness is a requirement, pagination should be implemented.
+    """
+
     serializer_class = UserSerializer
     queryset = User.objects.with_entry_summary()
-    # NOTE: maybe we can use materialized view, truncate messages for optimization.
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()

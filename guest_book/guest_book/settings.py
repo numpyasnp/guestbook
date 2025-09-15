@@ -82,7 +82,7 @@ WSGI_APPLICATION = "guest_book.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "test_db",
+        "NAME": "test_db_empty",
         "USER": "ugurcan",
         "PASSWORD": "secret123",
         "HOST": "localhost",

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from entry.models import Entry
+from libs.normalize import turkish_str
 from user.models import User
 
 
@@ -12,7 +13,7 @@ class EntryCreateSerializer(serializers.ModelSerializer):
         fields = ["name", "subject", "message"]
 
     def create(self, validated_data):
-        name = validated_data.pop("name")
+        name = turkish_str(validated_data.pop("name")).capitalize()
         user, _ = User.objects.get_or_create(name=name)
         entry = Entry.objects.create(user=user, **validated_data)
         return entry

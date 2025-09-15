@@ -24,7 +24,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.WARNING(f"Creating {users_count} users..."))
 
-        users = [User(name=turkish_str(fake.unique.name()).capitalize()) for _ in range(users_count)]
+        users = [User(name=turkish_str(fake.unique.name()).title()) for _ in range(users_count)]
         User.objects.bulk_create(users, batch_size=batch_size)
 
         self.stdout.write(self.style.SUCCESS(f"{users_count} users created."))

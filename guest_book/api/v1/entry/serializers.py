@@ -13,7 +13,7 @@ class EntryCreateSerializer(serializers.ModelSerializer):
         fields = ["name", "subject", "message"]
 
     def create(self, validated_data):
-        name = turkish_str(validated_data.pop("name")).capitalize()
+        name = turkish_str(validated_data.pop("name")).title()
         user, _ = User.objects.get_or_create(name=name)
         entry = Entry.objects.create(user=user, **validated_data)
         return entry

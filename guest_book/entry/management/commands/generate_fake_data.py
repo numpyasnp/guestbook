@@ -1,4 +1,6 @@
 from django.core.management.base import BaseCommand
+
+from libs.normalize import turkish_str
 from user.models import User
 from entry.models import Entry
 from faker import Faker
@@ -22,7 +24,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.WARNING(f"Creating {users_count} users..."))
 
-        users = [User(name=fake.unique.name()) for _ in range(users_count)]
+        users = [User(name=turkish_str(fake.unique.name()).capitalize()) for _ in range(users_count)]
         User.objects.bulk_create(users, batch_size=batch_size)
 
         self.stdout.write(self.style.SUCCESS(f"{users_count} users created."))

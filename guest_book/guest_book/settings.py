@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # 3.rd party
     "rest_framework",
     "django_extensions",
+    "drf_spectacular",
 ]
 
 MIDDLEWARE = [
@@ -82,7 +83,7 @@ WSGI_APPLICATION = "guest_book.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "test_db_empty",
+        "NAME": "test_db",
         "USER": "ugurcan",
         "PASSWORD": "secret123",
         "HOST": "localhost",
@@ -143,4 +144,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # REST Framework
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": ("rest_framework.renderers.JSONRenderer",),
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }

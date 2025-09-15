@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_DB: ${DB_NAME:-guestbook}
+      POSTGRES_USER: ${DB_USER:-guest}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-guest}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"
+
+  web:
+    build: .
+    depends_on:
+      - db
+      - redis
+    env_file:
+      - .env
+    environment:
+      DEBUG: ${DEBUG:-1}
+      SECRET_KEY: ${SECRET_KEY:-dev-secret}
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: ${DB_NAME:-guestbook}
+      DB_USER: ${DB_USER:-guest}
+      DB_PASSWORD: ${DB_PASSWORD:-guest}
+      CACHE_URL: redis://redis:6379/1
+      PYTHONPATH: /app/guest_book
+    ports:
+      - "8000:8000"
+    command: bash -c "python guest_book/manage.py migrate --noinput && python guest_book/manage.py collectstatic --noinput && gunicorn guest_book.wsgi:application --workers 3 --bind 0.0.0.0:8000 --timeout 60"
+    volumes:
+      - static_data:/app/guest_book/guest_book/staticfiles
+
+  nginx:
+    image: nginx:1.27
+    depends_on:
+      - web
+    ports:
+      - "80:80"
+    volumes:
+      - static_data:/usr/share/nginx/html/static:ro
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  pgdata:
+  static_data:

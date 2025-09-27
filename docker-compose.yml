@@ -36,7 +36,7 @@ services:
       PYTHONPATH: /app/guest_book
     ports:
       - "8000:8000"
-    command: bash -c "python guest_book/manage.py migrate --noinput && python guest_book/manage.py collectstatic --noinput && gunicorn guest_book.wsgi:application --workers 3 --bind 0.0.0.0:8000 --timeout 60"
+    command: bash -c "python guest_book/manage.py migrate --noinput && python guest_book/manage.py collectstatic --noinput && gunicorn guest_book.wsgi:application --workers 3 --bind 0.0.0.0:8000 --timeout 300"
     volumes:
       - static_data:/app/guest_book/guest_book/staticfiles
 
